@@ -7,14 +7,15 @@ import { equal, deepEqual } from 'assert-helpers'
 import kava from 'kava'
 import write from '@bevry/fs-write'
 import { isAccessible } from '@bevry/fs-accessible'
+import promiseErrback from 'promise-errback'
 
 // local
 import unlink from './index.js'
 
 kava.suite('@bevry/fs-unlink', function (suite, test) {
 	test('works as expected', function (done) {
-		Promise.resolve()
-			.then(async function () {
+		promiseErrback(
+			Promise.resolve().then(async function () {
 				// prepare the paths
 				const directory = join(tmpdir(), `bevry-fs-unlink-${Math.random()}`)
 				const file1 = join(directory, 'file1.txt')
@@ -38,9 +39,8 @@ kava.suite('@bevry/fs-unlink', function (suite, test) {
 					[false, false],
 					'removals were as expected'
 				)
-			})
-			.then(() => done())
-			.catch((err) => done(err))
-		// finally breaks early node support
+			}),
+			done
+		)
 	})
 })
